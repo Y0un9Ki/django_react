@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Alert } from "@mui/material";
 import { styled as muiStyled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { HiMiniFire } from "react-icons/hi2";
@@ -13,6 +13,7 @@ const SignIn = () => {
     userLOC: "",
   });
   const navigate = useNavigate();
+  const [status, setStatus] = useState(0);
 
   const { userID, userPW, userPWCheck, userLOC } = inputValue;
 
@@ -41,16 +42,15 @@ const SignIn = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.message === 200) {
-          console.log("success!");
+          setStatus(1);
+          setTimeout(() => navigate("/signin"));
         } else if (
           res.password[0] ===
           "This password is too short. It must contain at least 8 characters."
         ) {
-          console.log(
-            "This password is too short. It must contain at least 8 characters."
-          );
+          setStatus(2);
         } else if (res.password[0] === "not matched password1, password2") {
-          console.log("not matched password1, password2");
+          setStatus(3);
         }
       });
   };
@@ -113,6 +113,35 @@ const SignIn = () => {
           </SignUpButton>
           <GotoSignIn onClick={() => navigate("/signin")}>SIGNIN</GotoSignIn>
         </FormField>
+        <AlertSection>
+          {status === 1 ? (
+            <Alert
+              severity="success"
+              variant="outlined"
+              style={{ backgroundColor: "#ECFDE8" }}
+            >
+              회원가입이 완료되었습니다.
+            </Alert>
+          ) : null}
+          {status === 2 ? (
+            <Alert
+              severity="error"
+              variant="outlined"
+              style={{ backgroundColor: "#FFCBCB" }}
+            >
+              비밀번호는 문자, 숫자가 포함된 8자리 이상입니다.
+            </Alert>
+          ) : null}
+          {status === 3 ? (
+            <Alert
+              severity="error"
+              variant="outlined"
+              style={{ backgroundColor: "#FFCBCB" }}
+            >
+              비밀번호와 비밀번호 확인이 매칭되지 않습니다.
+            </Alert>
+          ) : null}
+        </AlertSection>
       </Container>
     </SignInPage>
   );
@@ -188,4 +217,11 @@ const GotoSignIn = styled.button`
     color: black;
     transition: 0.3s;
   }
+`;
+
+const AlertSection = styled.div`
+  position: absolute;
+  width: 400px;
+  height: 50px;
+  bottom: -60px;
 `;
