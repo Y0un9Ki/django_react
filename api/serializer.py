@@ -27,8 +27,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'password', 'password2', 'location')
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+    def validate(self, attrs): # ==> 여기서 attrs는 User의 저장된 username, password, location 키값에 들어가있는 value들을 딕셔너리 형태로 들고오는 것!!!
+        if attrs['password'] != attrs['password2']: # ==> attrs['password']는 User의 password의 해당되는 value값 즉, 실제 비밀번호이다.  
             raise serializers.ValidationError(
                 {"password": 'not matched password1, password2'})
 

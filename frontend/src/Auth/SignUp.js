@@ -43,7 +43,9 @@ const SignIn = () => {
       .then((res) => {
         if (res.message === 200) {
           setStatus(1);
-          setTimeout(() => navigate("/signin"));
+          setTimeout(() => {
+            navigate("/signin");
+          }, 5000);
         } else if (
           res.password[0] ===
           "This password is too short. It must contain at least 8 characters."
