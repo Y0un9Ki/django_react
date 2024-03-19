@@ -27,7 +27,7 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
-        # 회원가입이 성공한 경우 200 상태 코드와 함께 응답합니다.
+        # 회원가입이 성공한 경우 200 상태 코드와 함께 응답한다.
         return Response(
             {"message": 200},
             status=status.HTTP_200_OK
