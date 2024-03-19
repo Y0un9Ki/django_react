@@ -29,7 +29,7 @@ class RegisterView(generics.CreateAPIView):
         
         # 회원가입이 성공한 경우 200 상태 코드와 함께 응답합니다.
         return Response(
-            {"message": "회원가입이 성공적으로 완료되었습니다."},
+            {"message": 200},
             status=status.HTTP_200_OK
         )
 
