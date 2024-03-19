@@ -39,7 +39,20 @@ const SignIn = () => {
       }),
     })
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) => {
+        if (res.message === 200) {
+          console.log("success!");
+        } else if (
+          res.password[0] ===
+          "This password is too short. It must contain at least 8 characters."
+        ) {
+          console.log(
+            "This password is too short. It must contain at least 8 characters."
+          );
+        } else if (res.password[0] === "not matched password1, password2") {
+          console.log("not matched password1, password2");
+        }
+      });
   };
 
   return (
