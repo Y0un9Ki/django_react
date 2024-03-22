@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'post',
     'rest_framework', # 추가
     'rest_framework_simplejwt.token_blacklist', # 추가
     'corsheaders', # 추가
