@@ -34,8 +34,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']: # ==> attrs['password']는 User의 password의 해당되는 value값 즉, 실제 비밀번호이다.  
             raise serializers.ValidationError(
                 {"password": 'not matched password1, password2'})
-        
-        if User.objects.filter(username=attrs['username']).exists():
+
+        username = attrs.get('username')
+        if User.objects.filter(username=username).exists():
             raise serializers.ValidationError(
                 {"username": 'already username exist'})
 
