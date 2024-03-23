@@ -4,7 +4,7 @@ from .models import Post
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fieleds = ['username', 'title', 'content']
+        fields = '__all__'
         
     def validate(self, attrs):
         if len(attrs.get('username', '')) <2:
