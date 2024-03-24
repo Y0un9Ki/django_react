@@ -43,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        location = validated_data.pop('location', None) # None이 의미하는 것은 만약 location이 없으면 None값을 줘라라는 의미
+        location = validated_data.pop('location', '') # None이 의미하는 것은 만약 location이 없으면 None값을 줘라라는 의미
         user = User.objects.create(
             username=validated_data['username'],
         )
