@@ -18,11 +18,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(required=True)
-    # password = serializers.CharField(
-    #     write_only=True, required=True, validators=[validate_password])
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    # location = serializers.CharField(required=True)
+    location = serializers.CharField(required=True)
     # RegisterSerializer에서 ModelSerializer를 상속받았기에 model에서 가지고 있는 속성들을 알아서 가지고 온다. 
     # 그렇기에 굳이 username, password, location을 정의를 안해줘도 되지만 헷갈리기에 그냥 정의하자!!!
     class Meta:
@@ -43,14 +43,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        location = validated_data.pop('location', '') # None이 의미하는 것은 만약 location이 없으면 None값을 줘라라는 의미
-        user = User.objects.create(
-            username=validated_data['username'],
-        )
+        # location = validated_data.pop('location', '') # None이 의미하는 것은 만약 location이 없으면 None값을 줘라라는 의미
+        # user = User.objects.create(
+        #     username=validated_data['username'],
+        # )
 
-        user.set_password(validated_data['password'])
-        if location:
-            user.location = location
-        user.save()
+        # user.set_password(validated_data['password'])
+        # if location:
+        #     user.location = location
         
-        return user
+        # user.save()
+        
+        return User.objects.create(**validated_data)

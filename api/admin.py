@@ -7,11 +7,11 @@ from django.contrib.auth.admin import UserAdmin
 
 User = get_user_model()
 
-@admin.register(User)
+
 class CustomUserAdmin(UserAdmin):
     fieldsets = [
         (None, {'fields': ('username', 'password')}),
-        ('개인정보', {'fields': ('email',)}),
+        ('개인정보필드', {'fields': ('first_name', 'last_name', 'email')}),
         ('추가필드', {'fields': ('location',)}),
         (
             '권한',
@@ -19,8 +19,11 @@ class CustomUserAdmin(UserAdmin):
                 'fields': (
                     'is_active',
                     'is_staff',
-                    'is_superuser',
+                    'is_admin',
                 )
             }
         )
     ]
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+    
+admin.site.register(User, CustomUserAdmin)
