@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Alert } from "@mui/material";
 import { styled as muiStyled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { HiMiniFire } from "react-icons/hi2";
@@ -8,6 +8,7 @@ import { HiMiniFire } from "react-icons/hi2";
 const SignIn = () => {
   const [inputValue, setInputValue] = useState({ userID: "", userPW: "" });
   const navigate = useNavigate();
+  const [siginInStatus, setSignStatus] = useState(false);
 
   const { userID, userPW } = inputValue;
 
@@ -18,6 +19,31 @@ const SignIn = () => {
       ...inputValue,
       [name]: value,
     });
+  };
+
+  const signinHandler = () => {
+    if (!userID || !userPW) return;
+    fetch("http://127.0.0.1:8000/api/token/", {
+      //signup 요청주소 기입
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: userID,
+        password: userPW,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (
+          res.detail === "No active account found with the given credentials"
+        ) {
+          setSignStatus(true);
+        } else {
+          setSignStatus(false);
+          localStorage.setItem("SEMITOKEN", res.access);
+          navigate("/");
+        }
+      });
   };
 
   return (
@@ -50,13 +76,28 @@ const SignIn = () => {
               onChange={inputHandler}
             />
           </InputField>
-          <SignInButton variant="contained" size="large">
+          <SignInButton
+            variant="contained"
+            size="large"
+            onClick={signinHandler}
+          >
             SIGNIN
           </SignInButton>
           <SignUpButton onClick={() => navigate("/signup")}>
             SIGNUP
           </SignUpButton>
         </FormField>
+        <AlertSection>
+          {siginInStatus && (
+            <Alert
+              severity="error"
+              variant="outlined"
+              style={{ backgroundColor: "#FFCBCB" }}
+            >
+              로그인정보를 확인해주세요
+            </Alert>
+          )}
+        </AlertSection>
       </Container>
     </SignInPage>
   );
@@ -132,4 +173,11 @@ const SignUpButton = styled.button`
     color: black;
     transition: 0.3s;
   }
+`;
+
+const AlertSection = styled.div`
+  position: absolute;
+  width: 400px;
+  height: 50px;
+  bottom: -60px;
 `;

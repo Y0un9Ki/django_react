@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PiSignOutBold } from "react-icons/pi";
@@ -8,14 +8,15 @@ import { FaUser } from "react-icons/fa6";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { styled as muiStyled } from "@mui/material/styles";
-import Cat1 from "./Contents/Cat1";
+import Rank from "./Contents/Rank";
 import Cat2 from "./Contents/Cat2";
 import Cat3 from "./Contents/Cat3";
-import Cat4 from "./Contents/Cat4";
+import QnA from "./Contents/QnA";
 
 function App() {
   const [value, setValue] = useState(0);
   const navigate = useNavigate();
+  const [signinStatus, setSigninStatus] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -23,23 +24,38 @@ function App() {
 
   console.log(value);
 
+  useEffect(() => {
+    if (localStorage.getItem("SEMITOKEN")) {
+      setSigninStatus(true);
+    }
+  }, []);
+
   return (
     <Mainpage>
       <Container>
         <Header>
           <HiMiniFire size={40} />
-          <Auth>
-            <FaRegUser
-              size={25}
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/signin")}
-            />
-            <PiSignOutBold
-              size={30}
-              style={{ cursor: "pointer" }}
-              onClick={() => console.log("signout")}
-            />
-          </Auth>
+          {signinStatus ? (
+            <Auth>
+              <FaUser size={25} style={{ cursor: "pointer" }} />
+              <PiSignOutBold
+                size={30}
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  localStorage.removeItem("SEMITOKEN");
+                  setSigninStatus(false);
+                }}
+              />
+            </Auth>
+          ) : (
+            <Auth>
+              <FaRegUser
+                size={25}
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/signin")}
+              />
+            </Auth>
+          )}
         </Header>
         <Tapbar>
           <StyleTabs
@@ -50,16 +66,18 @@ function App() {
             aria-label="scrollable prevent tabs example"
             TabIndicatorProps={{ style: { backgroundColor: "#493d26" } }}
           >
-            <StyleTab label="Cat1" />
+            <StyleTab label="서울시 주택화재 취약지역 분석" />
             <StyleTab label="Cat2" />
             <StyleTab label="Cat3" />
-            <StyleTab label="Cat4" />
+            <StyleTab label="문의사항" />
           </StyleTabs>
         </Tapbar>
-        {value === 0 && <Cat1 />}
-        {value === 1 && <Cat2 />}
-        {value === 2 && <Cat3 />}
-        {value === 3 && <Cat4 />}
+        <ContentSection>
+          {value === 0 && <Rank />}
+          {value === 1 && <Cat2 />}
+          {value === 2 && <Cat3 />}
+          {value === 3 && <QnA />}
+        </ContentSection>
       </Container>
     </Mainpage>
   );
@@ -115,3 +133,8 @@ const StyleTab = muiStyled(Tab)(() => ({
     borderBottomColor: "#493d26",
   },
 }));
+
+const ContentSection = styled.div`
+  padding-top: 30px;
+  height: 80vh;
+`;
