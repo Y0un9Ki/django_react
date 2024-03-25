@@ -2,10 +2,10 @@ from rest_framework import serializers
 from .models import Post
 
 class PostSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source = 'user.username')
+    user = serializers.ReadOnlyField(source = 'user.username')
     class Meta:
         model = Post
-        fields = ['username', 'title', 'content', 'created_at']
+        fields = ['user', 'title', 'content', 'created_at']
         
     def validate(self, attrs):
         if len(attrs.get('title', ''))>100:

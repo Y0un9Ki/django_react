@@ -1,10 +1,12 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
+from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -18,11 +20,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(required=True)
-    # password = serializers.CharField(
-    #     write_only=True, required=True, validators=[validate_password])
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    # location = serializers.CharField(required=True)
+    location = serializers.CharField(required=True)
     # RegisterSerializer에서 ModelSerializer를 상속받았기에 model에서 가지고 있는 속성들을 알아서 가지고 온다. 
     # 그렇기에 굳이 username, password, location을 정의를 안해줘도 되지만 헷갈리기에 그냥 정의하자!!!
     class Meta:

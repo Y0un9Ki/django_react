@@ -7,8 +7,9 @@ from django.http import JsonResponse
 from api.serializer import MyTokenObtainPairSerializer, RegisterSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 
