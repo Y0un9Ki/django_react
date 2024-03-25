@@ -1,45 +1,86 @@
-# api/views.py
-
-from django.shortcuts import render
-from rest_framework.decorators import api_view
+from .models import User
+from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import JsonResponse
-from api.serializer import MyTokenObtainPairSerializer, RegisterSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics, status
-from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.contrib.auth import get_user_model
 
-# Create your views here.
+from .serializer import (
+    UserRegistrationSerializer,
+    UserLoginSerializer,
+    UserListSerializer
+)
 
-User = get_user_model()
+class AuthUserRegistrationView(APIView):
+    serializer_class = UserRegistrationSerializer
+    permission_classes = (AllowAny, )
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        valid = serializer.is_valid(raise_exception=True)
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegisterSerializer
-    
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        if valid:
+            serializer.save()
+            status_code = status.HTTP_201_CREATED
+
+            response = {
+                'message': '회원가입에 성공하셨습니다'
+            }
+
+            return Response(response, status=status_code)
         
-        # 회원가입이 성공한 경우 200 상태 코드와 함께 응답한다.
-        return Response(
-            {"message": 200},
-            status=status.HTTP_200_OK
-        )
+class AuthUserLoginView(APIView):
+    serializer_class = UserLoginSerializer
+    permission_classes = (AllowAny, )
 
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        valid = serializer.is_valid(raise_exception=True)
 
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        '/api/token/',
-        '/api/register/',
-        '/api/token/refresh/'
-    ]
-    return Response(routes)
+        if valid:
+            status_code = status.HTTP_200_OK
+
+            response = {
+                'success': True,
+                'statusCode': status_code,
+                'message': 'User logged in successfully',
+                'access': serializer.data['access'],
+                'refresh': serializer.data['refresh'],
+                'authenticatedUser': {
+                    'username': serializer.data['username'],
+                    'role': serializer.data['role'],
+                    'location': serializer.data['location'],
+                }
+            }
+
+            return Response(response, status=status_code)
+        
+        else:
+            response={
+                'message': '로그인에 실패하셨습니다.'
+            }
+            return Response(response)
+        
+class UserListView(APIView):
+    serializer_class = UserListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        if user.role != 1:
+            response = {
+                'success': False,
+                'status_code': status.HTTP_403_FORBIDDEN,
+                'message': 'You are not authorized to perform this action'
+            }
+            return Response(response, status.HTTP_403_FORBIDDEN)
+        else:
+            users = User.objects.all()
+            serializer = self.serializer_class(users, many=True)
+            response = {
+                'success': True,
+                'status_code': status.HTTP_200_OK,
+                'message': 'Successfully fetched users',
+                'users': serializer.data
+
+            }
+            return Response(response, status=status.HTTP_200_OK)
