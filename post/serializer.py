@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Post
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source = 'user.username')
+    user = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Post
         fields = ['user', 'title', 'content', 'created_at']
