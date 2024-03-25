@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'signup.User'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,7 +33,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'signup',
     'post',
+    'rest_framework_simplejwt',
     'rest_framework', # 추가
     'rest_framework_simplejwt.token_blacklist', # 추가
     'corsheaders', # 추가
