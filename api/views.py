@@ -62,7 +62,7 @@ class AuthUserLoginView(APIView):
         
 class UserListView(APIView):
     serializer_class = UserListSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,) #(AllowAny,)
 
     def get(self, request):
         user = request.user
