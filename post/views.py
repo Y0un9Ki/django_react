@@ -93,12 +93,15 @@ class CommentList(mixins.ListModelMixin,
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs) # 모든 사람이 작성할 수 있도록 post를 작성했다.
+    
 class CommentDetail(mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
-    permission_classes = (AllowAny,)#(IsAdminUser,IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     authentication_classes = [JWTAuthentication]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
