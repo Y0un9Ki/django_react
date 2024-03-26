@@ -98,7 +98,7 @@ class CommentDetail(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)#(IsAdminUser,IsAuthenticatedOrReadOnly)
     authentication_classes = [JWTAuthentication]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
