@@ -8,12 +8,12 @@ class CustomUserManager(BaseUserManager):
     and has an is_admin field to allow access to the admin app 
     """
     def create_user(self, username, password, location, **extra_fields):
-        if not username:
-            raise ValueError(_("이름을 넣어주세요"))
-        if not password:
-            raise ValueError(_("패스워드를 넣어주세요"))
-        if not location:
-            raise ValueError(_('사는 곳의 구를 적어주세요(서울한정)'))
+        # if not username:
+        #     raise ValueError(_("이름을 넣어주세요"))
+        # if not password:
+        #     raise ValueError(_("패스워드를 넣어주세요"))
+        # if not location:
+        #     raise ValueError(_('사는 곳의 구를 적어주세요(서울한정)'))
 
         user = self.model(
             username=username,
@@ -24,6 +24,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, password, location, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('role', 1)
 
