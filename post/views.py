@@ -10,6 +10,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from .permissions import IsOwnerOrReadOnly, IsSuperUser
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 
 
@@ -60,7 +62,7 @@ from rest_framework.exceptions import PermissionDenied
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = (IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly)
     
     def perform_create(self, serializer):
@@ -97,6 +99,7 @@ class CommentDetail(mixins.CreateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
     permission_classes = (IsAdminUser,)
+    authentication_classes = [JWTAuthentication]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
     
