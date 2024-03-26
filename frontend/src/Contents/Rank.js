@@ -30,9 +30,9 @@ const Rank = () => {
         label: cat,
         data: rankData[cat],
         borderColor: "#1d0200",
-        pointStyle: "circle",
-        pointRadius: 5,
-        pointHoverRadius: 15,
+        pointStyle: "rectRounded",
+        pointRadius: 7,
+        pointHoverRadius: 12,
       },
     ],
   };

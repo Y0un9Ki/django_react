@@ -9,8 +9,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { styled as muiStyled } from "@mui/material/styles";
 import Rank from "./Contents/Rank";
-import Cat2 from "./Contents/Cat2";
-import Cat3 from "./Contents/Cat3";
 import QnA from "./Contents/QnA";
 
 function App() {
@@ -67,16 +65,12 @@ function App() {
             TabIndicatorProps={{ style: { backgroundColor: "#493d26" } }}
           >
             <StyleTab label="서울시 주택화재 취약지역 분석" />
-            <StyleTab label="Cat2" />
-            <StyleTab label="Cat3" />
             <StyleTab label="문의사항" />
           </StyleTabs>
         </Tapbar>
         <ContentSection>
           {value === 0 && <Rank />}
-          {value === 1 && <Cat2 />}
-          {value === 2 && <Cat3 />}
-          {value === 3 && <QnA />}
+          {value === 1 && <QnA />}
         </ContentSection>
       </Container>
     </Mainpage>
