@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from .permissions import IsOwnerOrReadOnly, IsSuperUser
 from rest_framework.exceptions import PermissionDenied
+from django.http import JsonResponse
 
 
 
@@ -98,7 +99,7 @@ class CommentDetail(mixins.CreateModelMixin,
     permission_classes = (IsAdminUser,)
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
-    
+
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
     
@@ -115,4 +116,31 @@ class CommentDetail(mixins.CreateModelMixin,
         if not self.request.user.is_staff:
             raise PermissionDenied({'message' : '접근권한이 없습니다.'})
         serializer.save(user=self.request.user)
+        
+def post_comments(request, post_id):
+    post_comments = Comment.objects.filter(post_id=post_id)
+    print(post_comments)
+    comments_data = [{'comment': comment.comment, 'user': comment.user.username} for comment in post_comments]
+    # return JsonResponse(comments_data, safe=False)
+    return JsonResponse({'data': comments_data}, safe=False, json_dumps_params={'ensure_ascii': False}, status=200) 
+    # 요청이 들어와서 데이터가 JsomResponse로 응답을 보내면 한글데이터가 깨지는 현상이 생겼다. 그렇기에 우리는 인코딩을 해서 보내주었다.
+    # json_dumps_params={'ensure_ascii': False} 이것이 False일때는 ASCII 외의 유니코드 문자 또한 직렬화할 수 있도록 하고,
+    # json_dumps_params={'ensure_ascii': True} 이것이 Trueaus ACSII문자로 인코딩하게된다.
+    
+# class PostCommentview(APIView):
+#     def get(self, request, post_id, format=None):
+#         post_comments = Comment.objects.filter(post_id = post_id)
+#         comment_data = [{"comment" : Comment.comment, 'user': comment.user.username} for comment in post_comments]
+        
+#         return Response({'data': comment_data}, status=status.HTTP_200_OK)
+        
+        
+        
+        
+        
+        
+#     def get(self, request, pk, format=None):
+#         post = self.get_object(pk)
+#         serializer = PostSerializer(post)
+#         return Response(serializer.data)
         

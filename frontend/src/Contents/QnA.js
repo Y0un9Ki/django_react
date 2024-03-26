@@ -30,6 +30,17 @@ const QnA = () => {
     setCommentOpen(!commentOpen);
   };
 
+  const clickFetch = () => {
+    fetch("http://127.0.0.1:8000/post/post/1/comments/", {
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        res.json();
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  };
   const clickHandler = () => {};
   return (
     <Container>
@@ -64,6 +75,10 @@ const QnA = () => {
             </ListHeader>
             <ListBody>로그인이 안되요</ListBody>
           </ListContainer>
+
+          <div style={{ cursor: "pointer" }} onClick={clickFetch}>
+            123
+          </div>
         </ListsSection>
       ) : (
         <PostSection>
