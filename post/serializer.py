@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Comment
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source = 'user.username')
+    user = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Post
-        fields = ['user', 'title', 'content', 'created_at']
+        fields = ['id', 'user', 'title', 'content', 'created_at']
         
     def validate(self, attrs):
         if len(attrs.get('title', ''))>100:
@@ -23,3 +23,9 @@ class PostSerializer(serializers.ModelSerializer):
         
     #     instance.save()
     #     return instance
+    
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source = 'user.username', read_only=True)
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'user', 'comment', 'created_at']

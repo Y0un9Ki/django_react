@@ -1,9 +1,45 @@
+import uuid
+
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.utils import timezone
+from .managers import CustomUserManager
 
 # Create your models here.
-class User(AbstractUser):
-    # 여기에 추가적인 필드를 정의할 수 있습니다.
-    location = models.CharField(max_length=100, blank=True, null=True)
+class User(AbstractBaseUser, PermissionsMixin):
+
+    # These fields tie to the roles!
+    ADMIN = 1
+    MANAGER = 2
+    COMMON_USER = 3
+
+    ROLE_CHOICES = (
+        (ADMIN, 'Admin'),
+        (MANAGER, 'Manager'),
+        (COMMON_USER, 'common_user')
+    )
     
-    # 다음에 시간되면 class User(models.Model): 로 커스텀 유저로 만들어보기 -> username과 password, location 필드 추가해보기
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+    # Roles created here
+    uid = models.UUIDField(unique=True, editable=False, default=uuid.uuid4, verbose_name='Public identifier')
+    username = models.CharField(unique=True, blank=False, max_length=10)
+    location = models.CharField(max_length=100, blank=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True, default=3)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=False)
+    # is_staff = models.BooleanField(default=False)
+    created_date = models.DateTimeField(default=timezone.now)
+    modified_date = models.DateTimeField(default=timezone.now)
+
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['location']
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.username

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import PostViewSet
+from .views import PostViewSet, CommentViewSet
 from rest_framework.routers import DefaultRouter
 
 # 밑에는 class view를 기반으로 할 때, 만들어줘야 하는 url방식이다.
@@ -15,10 +15,11 @@ urlpatterns = format_suffix_patterns(urlpatterns)
 # router방식 사용
 
 router = DefaultRouter()
-router.register('post', PostViewSet)
+router.register('post', PostViewSet, basename='Post')
+router.register('comment', CommentViewSet, basename='comment')
 
 urlpatterns =[
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]
 
 # 위에는 router를 사용했을 때이며, 밑에는 router를 사용하지 않을 때 만들어줘야 하는 코드이다. 매우 편한것을 볼 수 있다.

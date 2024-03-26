@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from .models import Post
-from .serializer import PostSerializer
+from .models import Post, Comment
+from .serializer import PostSerializer, CommentSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from .permissions import IsOwnerOrReadOnly, IsSuperUser
 
 # Create your views here.
 
@@ -53,7 +56,22 @@ from rest_framework import status, viewsets
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = (IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly)
     
     def perform_create(self, serializer):
-        serializer.save(user = self.request.user) 
+        serializer.save(user=self.request.user)
+        
+class CommentViewSet(viewsets.ModelViewSet):
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = (IsAuthenticatedOrReadOnly, IsSuperUser)
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    
+    # perform_create는 현재 요청을 하는 user를 전달해주기 위해 만들어진 메서드이다.
+    # 이 저장된 user로 이제 권한을 정해주게 되는데 
+    # 객체를 생성한 유저와 요청을 한 유저가 같으며 그에 해당하는 권한을 주고,
+    # 만약 객체를 생성한 유저와 요청을 한 유저가 다르면 그냥 읽을 수 있게만 해주도록 나는 설정을 했다.
+    # 이것을 판단하기 위한 함수를 만들어준것이다.
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
