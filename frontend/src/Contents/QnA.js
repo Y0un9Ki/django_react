@@ -11,10 +11,12 @@ import { FaCommentDots } from "react-icons/fa6";
 const QnA = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState({ title: "", contents: "" });
+  const [commentValue, setCommentValue] = useState("");
   const { title, contents } = inputValue;
-  const [postStatus, setPostStatus] = useState(1);
+  const [postStatus, setPostStatus] = useState();
   const [commentOpen, setCommentOpen] = useState(false);
-  const [page, setPage] = useState(1);
+  const [postsData, setPostsData] = useState([]);
+  const [commentsData, setCommentsData] = useState([]);
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -25,15 +27,104 @@ const QnA = () => {
     });
   };
 
+  const commentHandler = (e) => {
+    setCommentValue(e.target.value);
+  };
+
   useEffect(() => {
-    fetch("", { headers: { "Content-Type": "application/json" } });
-  }, [page]);
+    fetch("http://localhost:8000/post/post", {
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setPostsData(res);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!postStatus) return;
+    if (isOpen) {
+      setIsOpen(false);
+    }
+    fetch(`http://localhost:8000/post/comments/${postStatus}`, {
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setCommentsData(res);
+      });
+  }, [postStatus]);
 
   const commentOpenHandler = () => {
     setCommentOpen(!commentOpen);
   };
 
-  const clickHandler = () => {};
+  const convertDate = (d) => {
+    const date = new Date(d);
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const formattedDate = `${year}년 ${month}월 ${day}일`;
+    return formattedDate;
+  };
+
+  const postSubmitHandler = () => {
+    if (!inputValue.title || !inputValue.contents) return;
+    fetch("http://localhost:8000/post/post/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `JWT ${localStorage.getItem("SEMITOKEN")}`,
+      },
+      body: JSON.stringify({
+        title: title,
+        content: contents,
+      }),
+    })
+      .then((res) => res.json())
+      .then(
+        fetch("http://localhost:8000/post/post", {
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setPostsData(res);
+          })
+      );
+    if (isOpen) {
+      setIsOpen(false);
+    }
+    setInputValue({ title: "", contents: "" });
+  };
+
+  const commentSubmitHandler = () => {
+    if (!commentValue) return;
+    fetch(`http://localhost:8000/post/comment/${postStatus}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `JWT ${localStorage.getItem("SEMITOKEN")}`,
+      },
+      body: JSON.stringify({
+        post: postStatus,
+        comment: commentValue,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        fetch(`http://localhost:8000/post/comments/${postStatus}`, {
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setCommentsData(res);
+          });
+        setCommentValue("");
+      });
+  };
+
   return (
     <Container>
       <Header>
@@ -60,21 +151,37 @@ const QnA = () => {
       </Header>
       {!postStatus ? (
         <ListsSection>
-          <ListContainer>
-            <ListHeader>
-              <NameSection>작성자: kwon</NameSection>
-              <CreatedSection>123</CreatedSection>
-            </ListHeader>
-            <ListBody>로그인이 안되요</ListBody>
-          </ListContainer>
+          {postsData &&
+            postsData.map((value) => {
+              return (
+                <ListContainer
+                  key={value.id}
+                  onClick={() => {
+                    setPostStatus(value.id);
+                  }}
+                >
+                  <ListHeader>
+                    <NameSection>작성자: {value.user}</NameSection>
+                    <CreatedSection>
+                      {convertDate(value.created_at)}
+                    </CreatedSection>
+                  </ListHeader>
+                  <ListBody>{value.title}</ListBody>
+                </ListContainer>
+              );
+            })}
         </ListsSection>
       ) : (
         <PostSection>
           <PostContainer>
             <PostHeader>
-              <PostTitle>로그인이 안되요</PostTitle>
+              <PostTitle>
+                {postsData && postsData[postStatus - 1].title}
+              </PostTitle>
             </PostHeader>
-            <PostBody>asd</PostBody>
+            <PostBody>
+              {postsData && postsData[postStatus - 1].content}
+            </PostBody>
             <CommentSection isOpen={commentOpen}>
               <CommentHeader>
                 <CommentTitle>답글</CommentTitle>
@@ -88,14 +195,25 @@ const QnA = () => {
               </CommentHeader>
               <Wrapper>
                 <CommentListSection>
-                  <CommentList>
-                    <CommentUser>user1</CommentUser>
-                    <Comment>답글입니다.</Comment>
-                  </CommentList>
+                  {commentsData &&
+                    commentsData.data?.map((data) => {
+                      return (
+                        <CommentList>
+                          <CommentUser>{data.user}</CommentUser>
+                          <Comment>{data.comment}</Comment>
+                        </CommentList>
+                      );
+                    })}
                 </CommentListSection>
                 <CommentPostSection>
-                  <CommentFieldInput />
-                  <SubmitButton style={{ width: "80px", height: "46px" }}>
+                  <CommentFieldInput
+                    value={commentValue}
+                    onChange={commentHandler}
+                  />
+                  <SubmitButton
+                    style={{ width: "80px", height: "46px" }}
+                    onClick={commentSubmitHandler}
+                  >
                     답글
                   </SubmitButton>
                 </CommentPostSection>
@@ -136,7 +254,7 @@ const QnA = () => {
               />
             </TextFieldWrapper>
             <ModalBottom>
-              <SubmitButton onClick={clickHandler}>문의하기</SubmitButton>
+              <SubmitButton onClick={postSubmitHandler}>문의하기</SubmitButton>
             </ModalBottom>
           </ModalBody>
         </Modal>
