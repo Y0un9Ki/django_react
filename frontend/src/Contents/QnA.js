@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IoClose } from "react-icons/io5";
 import { styled as muiStyled } from "@mui/material/styles";
@@ -14,8 +14,7 @@ const QnA = () => {
   const { title, contents } = inputValue;
   const [postStatus, setPostStatus] = useState(1);
   const [commentOpen, setCommentOpen] = useState(false);
-
-  console.log("12", postStatus);
+  const [page, setPage] = useState(1);
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -25,6 +24,10 @@ const QnA = () => {
       [name]: value,
     });
   };
+
+  useEffect(() => {
+    fetch("", { headers: { "Content-Type": "application/json" } });
+  }, [page]);
 
   const commentOpenHandler = () => {
     setCommentOpen(!commentOpen);
@@ -84,7 +87,12 @@ const QnA = () => {
                 </CommentOpen>
               </CommentHeader>
               <Wrapper>
-                <CommentListSection>adsf</CommentListSection>
+                <CommentListSection>
+                  <CommentList>
+                    <CommentUser>user1</CommentUser>
+                    <Comment>답글입니다.</Comment>
+                  </CommentList>
+                </CommentListSection>
                 <CommentPostSection>
                   <CommentFieldInput />
                   <SubmitButton style={{ width: "80px", height: "46px" }}>
@@ -321,8 +329,32 @@ const CommentSection = styled.div`
 const CommentListSection = styled.div`
   height: 400px;
   padding: 0 20px;
-  background-color: #fff;
   overflow: scroll;
+`;
+
+const CommentList = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 40px;
+  border: 1px solid #bbb;
+  margin-top: 10px;
+  border-radius: 4px;
+  padding: 10px 0;
+`;
+
+const CommentUser = styled.div`
+  display: flex;
+  align-items: center;
+  height: 16px;
+  font-size: 14px;
+  padding: 0 10px;
+`;
+
+const Comment = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px 0 0 10px;
+  font-size: 16px;
 `;
 
 const CommentPostSection = styled.div`

@@ -8,7 +8,7 @@ import { HiMiniFire } from "react-icons/hi2";
 const SignIn = () => {
   const [inputValue, setInputValue] = useState({ userID: "", userPW: "" });
   const navigate = useNavigate();
-  const [siginInStatus, setSignStatus] = useState(false);
+  const [signError, setSignError] = useState(false);
 
   const { userID, userPW } = inputValue;
 
@@ -23,8 +23,7 @@ const SignIn = () => {
 
   const signinHandler = () => {
     if (!userID || !userPW) return;
-    fetch("http://127.0.0.1:8000/api/token/", {
-      //signup 요청주소 기입
+    fetch("http://localhost:8000/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -34,12 +33,11 @@ const SignIn = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (
-          res.detail === "No active account found with the given credentials"
-        ) {
-          setSignStatus(true);
+        if (res.message[0] === "회원가입을 해주세요") {
+          setSignError(true);
+          return;
         } else {
-          setSignStatus(false);
+          setSignError(false);
           localStorage.setItem("SEMITOKEN", res.access);
           navigate("/");
         }
@@ -88,7 +86,7 @@ const SignIn = () => {
           </SignUpButton>
         </FormField>
         <AlertSection>
-          {siginInStatus && (
+          {signError && (
             <Alert
               severity="error"
               variant="outlined"

@@ -28,7 +28,7 @@ const SignIn = () => {
 
   const submitHandler = () => {
     if (!userID || !userPW || !userPWCheck || !userLOC) return;
-    fetch("http://127.0.0.1:8000/api/register/", {
+    fetch("http://localhost:8000/api/register", {
       //signup 요청주소 기입
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -41,17 +41,21 @@ const SignIn = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (res.message === 200) {
+        if (
+          res.username &&
+          res.username[0] === "user의 username은/는 이미 존재합니다."
+        ) {
+          setStatus(4);
+          return;
+        }
+        if (res.message === "회원가입에 성공하셨습니다") {
           setStatus(1);
           setTimeout(() => {
             navigate("/signin");
-          }, 5000);
-        } else if (
-          res.password[0] ===
-          "This password is too short. It must contain at least 8 characters."
-        ) {
+          }, 3000);
+        } else if (res.message[0] === "이름을 2글자 이상으로 해주세요") {
           setStatus(2);
-        } else if (res.password[0] === "not matched password1, password2") {
+        } else if (res.message[0] === "비밀번호가 맞지 않습니다.") {
           setStatus(3);
         }
       });
@@ -131,7 +135,7 @@ const SignIn = () => {
               variant="outlined"
               style={{ backgroundColor: "#FFCBCB" }}
             >
-              비밀번호는 문자, 숫자가 포함된 8자리 이상입니다.
+              아이디는 2글자 이상입니다.
             </Alert>
           ) : null}
           {status === 3 ? (
@@ -141,6 +145,15 @@ const SignIn = () => {
               style={{ backgroundColor: "#FFCBCB" }}
             >
               비밀번호와 비밀번호 확인이 매칭되지 않습니다.
+            </Alert>
+          ) : null}
+          {status === 4 ? (
+            <Alert
+              severity="error"
+              variant="outlined"
+              style={{ backgroundColor: "#FFCBCB" }}
+            >
+              이미 가입된 회원입니다.
             </Alert>
           ) : null}
         </AlertSection>
