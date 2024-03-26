@@ -85,6 +85,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 # comment에 대한 권한을 좀 더 세세하게 나누기 위해서 viewset이 아닌 mixins를 사용했다.        
 class CommentList(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
                   generics.GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = CommentSerializer
