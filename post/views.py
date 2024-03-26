@@ -94,8 +94,8 @@ class CommentList(mixins.ListModelMixin,
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs) # 모든 사람이 작성할 수 있도록 post를 작성했다.
+    # def post(self, request, *args, **kwargs):
+    #     return self.create(request, *args, **kwargs) # 모든 사람이 작성할 수 있도록 post를 작성했다.
     
 class CommentDetail(mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
@@ -120,8 +120,8 @@ class CommentDetail(mixins.CreateModelMixin,
         return self.destroy(request, *args, **kwargs)
     
     def perform_create(self, serializer):
-        if not self.request.user.is_staff:
-            raise PermissionDenied({'message' : '접근권한이 없습니다.'})
+        # if not self.request.user.is_staff:
+        #     raise PermissionDenied({'message' : '접근권한이 없습니다.'})
         serializer.save(user=self.request.user)
         
 def post_comments(request, post_id):
