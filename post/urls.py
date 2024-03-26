@@ -21,7 +21,7 @@ urlpatterns =[
     path('', include(router.urls)),
     path('comment/', CommentList.as_view()),
     path('comment/<int:pk>/', CommentDetail.as_view()),
-    path('comments/<int:post_id>', post_comments)
+    path('comments/<int:post_id>/', post_comments)
 ]
 
 # 위에는 router를 사용했을 때이며, 밑에는 router를 사용하지 않을 때 만들어줘야 하는 코드이다. 매우 편한것을 볼 수 있다.
