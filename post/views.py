@@ -3,7 +3,7 @@ from .models import Post, Comment
 from .serializer import PostSerializer, CommentSerializer
 from django.http import Http404
 from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.response import Response, JsonResponse
 from rest_framework import status, viewsets, mixins, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -116,3 +116,9 @@ class CommentDetail(mixins.CreateModelMixin,
             raise PermissionDenied({'message' : '접근권한이 없습니다.'})
         serializer.save(user=self.request.user)
         
+    def post_comments(request, post_id):
+        post_comments = Comment.objects.filter(post_id=post_id)
+        print(post_comments)
+        comments_data = [{'comment': comment.comment, 'user': comment.user.username} for comment in post_comments]
+        # return JsonResponse(comments_data, safe=False)
+        return JsonResponse({'data': comments_data}, safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
