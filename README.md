@@ -27,6 +27,8 @@ IDE : VScode
 
 Framework : Django-Rest-Framework 3.15.0
 
+협업 Tool : Git
+
 ## 기술 스택
 
 DataBase : SQLite3(빠른 개발을 위해)
