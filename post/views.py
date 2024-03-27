@@ -11,6 +11,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from .permissions import IsOwnerOrReadOnly, IsSuperUser
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -68,6 +69,13 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
         
+# 이것은 Post에 대해서만 pagenation하겠다는 것을 함수로 만들어 놓은 것이다.
+# 이렇게 setting에서 전체적으로 진행하지 않고 따로 pagenation을 만들어 주고 싶다면 밑에 코드와 같이 설정을 해주어야 한다.
+class PostPaginationViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    pagination_class = PageNumberPagination
+    
 # class CommentViewSet(viewsets.ModelViewSet):
 #     authentication_classes = [BasicAuthentication, SessionAuthentication]
 #     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -139,5 +147,5 @@ def post_dict(request, post_id):
     post_dict_data = [{'id': post.id, 'user': post.user.username,
                        'title': post.title, 'content': post.content, 'created_at': post.created_at}
                       for post in post_dict]
-    return JsonResponse(post_dict_data[0], safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
+    return JsonResponse(data=post_dict_data[0], safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
     
