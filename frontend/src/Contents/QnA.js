@@ -411,7 +411,6 @@ const ListBody = styled.div`
 `;
 
 const PostSection = styled.div`
-  width: 100%;
   height: 660px;
   padding: 20px 30px;
 `;
