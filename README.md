@@ -20,11 +20,19 @@ frontend : 권오규
 
 ## 개발 환경
 backend : Python
+
+
 frontend : react
+
+
 IDE : VScode
+
+
 Framework : Django-Rest-Framework 3.15.0
 
 
 ## 기술 스택
 DataBase : SQLite3(빠른 개발을 위해)
+
+
 회의 : Notion, 서면회의
