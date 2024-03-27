@@ -7,6 +7,7 @@ import { MdBorderColor } from "react-icons/md";
 import { FaRegListAlt } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa";
 import { FaCommentDots } from "react-icons/fa6";
+import Pagination from "@mui/material/Pagination";
 
 const QnA = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,8 @@ const QnA = () => {
   const [postsData, setPostsData] = useState([]);
   const [commentsData, setCommentsData] = useState([]);
   const [detailPost, setDetailPost] = useState();
+  const [page, setPage] = useState(1);
+  const pageCount = 5;
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -28,19 +31,24 @@ const QnA = () => {
     });
   };
 
+  const pageChange = (e, value) => {
+    setPage(value);
+  };
+
   const commentHandler = (e) => {
     setCommentValue(e.target.value);
   };
 
   useEffect(() => {
-    fetch("http://localhost:8000/post/post", {
+    fetch(`http://localhost:8000/post/post/?page=${page}`, {
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then((res) => {
+        console.log(res);
         setPostsData(res);
       });
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     if (!postStatus) return;
@@ -92,15 +100,18 @@ const QnA = () => {
       }),
     })
       .then((res) => res.json())
-      .then(
+      .then((res) => {
+        console.log(res);
+      })
+      .then((res) => {
         fetch("http://localhost:8000/post/post", {
           headers: { "Content-Type": "application/json" },
         })
           .then((res) => res.json())
           .then((res) => {
             setPostsData(res);
-          })
-      );
+          });
+      });
     if (isOpen) {
       setIsOpen(false);
     }
@@ -160,25 +171,33 @@ const QnA = () => {
       </Header>
       {!postStatus ? (
         <ListsSection>
-          {postsData &&
-            postsData?.map((value) => {
-              return (
-                <ListContainer
-                  key={value.id}
-                  onClick={() => {
-                    setPostStatus(value.id);
-                  }}
-                >
-                  <ListHeader>
-                    <NameSection>작성자: {value.user}</NameSection>
-                    <CreatedSection>
-                      {convertDate(value.created_at)}
-                    </CreatedSection>
-                  </ListHeader>
-                  <ListBody>{value.title}</ListBody>
-                </ListContainer>
-              );
-            })}
+          <Lists>
+            {postsData &&
+              postsData.results?.map((value) => {
+                return (
+                  <ListContainer
+                    key={value.id}
+                    onClick={() => {
+                      setPostStatus(value.id);
+                    }}
+                  >
+                    <ListHeader>
+                      <NameSection>작성자: {value.user}</NameSection>
+                      <CreatedSection>
+                        {convertDate(value.created_at)}
+                      </CreatedSection>
+                    </ListHeader>
+                    <ListBody>{value.title}</ListBody>
+                  </ListContainer>
+                );
+              })}
+          </Lists>
+          <PageSection>
+            <Pagination
+              count={Math.ceil(postsData?.count / pageCount)}
+              onChange={pageChange}
+            />
+          </PageSection>
         </ListsSection>
       ) : (
         <PostSection>
@@ -317,8 +336,17 @@ const OptionSection = styled.div`
 `;
 
 const ListsSection = styled.div`
-  height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 650px;
   padding: 20px 30px;
+`;
+
+const Lists = styled.div`
+  width: 100%;
+  height: 600px;
 `;
 
 const ListContainer = styled.div`
@@ -342,6 +370,12 @@ const ListContainer = styled.div`
       box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.6);
     }
   }
+`;
+
+const PageSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ListHeader = styled.div`
@@ -377,6 +411,7 @@ const ListBody = styled.div`
 `;
 
 const PostSection = styled.div`
+  width: 100%;
   height: 660px;
   padding: 20px 30px;
 `;
@@ -385,6 +420,7 @@ const PostContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
   border: 1px solid #aaa;
   border-radius: 8px;
