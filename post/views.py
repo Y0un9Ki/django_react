@@ -139,5 +139,5 @@ def post_dict(request, post_id):
     post_dict_data = [{'id': post.id, 'user': post.user.username,
                        'title': post.title, 'content': post.content, 'created_at': post.created_at}
                       for post in post_dict]
-    return JsonResponse({'data': post_dict_data}, safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
+    return JsonResponse(post_dict_data[0], safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
     
