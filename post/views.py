@@ -102,7 +102,7 @@ class CommentDetail(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsOwnerOrReadOnly, IsAdminUser)
     authentication_classes = [JWTAuthentication]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
@@ -130,3 +130,14 @@ def post_comments(request, post_id):
     comments_data = [{'comment': comment.comment, 'user': comment.user.username} for comment in post_comments]
     # return JsonResponse(comments_data, safe=False)
     return JsonResponse({'data': comments_data}, safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
+
+# 규가 post_id 값을 요청을 보내주면 나는 그걸 가지고 post_id에 대한 post의 딕셔너리를 데이터로 응답으로 보내준다.
+
+def post_dict(request, post_id):
+    post_dict = Post.objects.filter(id=post_id)
+    print(post_dict)
+    post_dict_data = [{'id': post.id, 'user': post.user.username,
+                       'title': post.title, 'content': post.content, 'created_at': post.created_at}
+                      for post in post_dict]
+    return JsonResponse({'data': post_dict_data}, safe=False, json_dumps_params={'ensure_ascii': False}, status=200)
+    

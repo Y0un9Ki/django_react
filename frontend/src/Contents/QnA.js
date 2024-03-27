@@ -124,7 +124,7 @@ const QnA = () => {
         setCommentValue("");
       });
   };
-
+  console.log("postdata", postsData);
   return (
     <Container>
       <Header>
@@ -132,13 +132,15 @@ const QnA = () => {
           <Title>문의 사항</Title>
         </TitleSection>
         {!postStatus ? (
-          <OptionSection
-            onClick={() => {
-              setIsOpen(true);
-            }}
-          >
-            <MdBorderColor size={24} style={{ cursor: "pointer" }} />
-          </OptionSection>
+          localStorage.getItem("SEMITOKEN") ? (
+            <OptionSection
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              <MdBorderColor size={24} style={{ cursor: "pointer" }} />
+            </OptionSection>
+          ) : null
         ) : (
           <OptionSection
             onClick={() => {
@@ -152,7 +154,7 @@ const QnA = () => {
       {!postStatus ? (
         <ListsSection>
           {postsData &&
-            postsData.map((value) => {
+            postsData?.map((value) => {
               return (
                 <ListContainer
                   key={value.id}
