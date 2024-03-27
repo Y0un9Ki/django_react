@@ -17,6 +17,7 @@ const QnA = () => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [postsData, setPostsData] = useState([]);
   const [commentsData, setCommentsData] = useState([]);
+  const [detailPost, setDetailPost] = useState();
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -46,6 +47,13 @@ const QnA = () => {
     if (isOpen) {
       setIsOpen(false);
     }
+    fetch(`http://localhost:8000/post/post/${postStatus}`, {
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setDetailPost(res);
+      });
     fetch(`http://localhost:8000/post/comments/${postStatus}`, {
       headers: { "Content-Type": "application/json" },
     })
@@ -124,7 +132,6 @@ const QnA = () => {
         setCommentValue("");
       });
   };
-  console.log("postdata", postsData);
   return (
     <Container>
       <Header>
@@ -177,13 +184,15 @@ const QnA = () => {
         <PostSection>
           <PostContainer>
             <PostHeader>
-              <PostTitle>
-                {postsData && postsData[postStatus - 1].title}
-              </PostTitle>
+              <PostTitle>{detailPost && detailPost.title}</PostTitle>
+              <PostSubHeader>
+                <PostText>{detailPost && detailPost.user}</PostText>
+                <PostText>
+                  {detailPost && convertDate(detailPost.created_at)}
+                </PostText>
+              </PostSubHeader>
             </PostHeader>
-            <PostBody>
-              {postsData && postsData[postStatus - 1].content}
-            </PostBody>
+            <PostBody>{detailPost && detailPost.content}</PostBody>
             <CommentSection isOpen={commentOpen}>
               <CommentHeader>
                 <CommentTitle>답글</CommentTitle>
@@ -383,17 +392,32 @@ const PostContainer = styled.div`
 `;
 const PostHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   padding: 0 20px;
   border-bottom: 1px solid #aaa;
   background-color: #c6c3ba;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-  height: 50px;
+  height: 80px;
+`;
+
+const PostSubHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px;
+`;
+
+const PostText = styled.p`
+  font-size: 14;
+  color: #666;
 `;
 
 const PostTitle = styled.p`
+  display: flex;
+  align-items: center;
+  height: 40px;
   font-size: 18px;
 `;
 
@@ -443,7 +467,7 @@ const CommentSection = styled.div`
   border-bottom-right-radius: 8px;
   border-top: 1px solid #aaa;
   box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.05);
-  transition: height 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  transition: height 0.2s ease-in-out, box-shadow 0.5s ease-in-out;
 `;
 
 const CommentListSection = styled.div`
