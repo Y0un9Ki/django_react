@@ -87,7 +87,7 @@ const Mainpage = styled.div`
 
 const Container = styled.div`
   width: 800px;
-  height: 100vh;
+  height: 120vh;
   background-color: #e9e6dd;
 `;
 
