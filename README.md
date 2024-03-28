@@ -19,6 +19,10 @@
 
 </br>
 
+# API Document
+<a href='https://leeward-stool-c87.notion.site/API-Document-11216201876949309c288b0bd0b4dc63?pvs=4'><img src="https://img.shields.io/badge/notion-181717?style=flat&logo=Trello&logoColor=white" width="120" /></a>
+
+
 # STACK
 
 ### F.E.
@@ -43,6 +47,5 @@
 <img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
 <img src="https://img.shields.io/badge/Slack-4A154B?style=flat&logo=Slack&logoColor=white"/>
 <img src="https://img.shields.io/badge/VSCode-007ACC?style=flat&logo=Visual Studio Code&logoColor=white"/>
-<a href='https://trello.com/b/k1QJ1bBl/40%EA%B8%B0-niweke-1st-project'><img src="https://img.shields.io/badge/Trello-0052CC?style=flat&logo=Trello&logoColor=white" /></a>
 </div>
 
