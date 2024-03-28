@@ -12,6 +12,7 @@ from .permissions import IsOwnerOrReadOnly, IsSuperUser
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.pagination import PageNumberPagination
+from .pagination import PaginationHandlerMixin
 
 
 
@@ -19,21 +20,37 @@ from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 # 밑에 주석된 코드는 APIView로 작성한 view이다.
-# class PostList(APIView):
+# class PostList(APIView, PaginationHandlerMixin):
+#     pagination_class = PageNumberPagination
+#     serializer_class = PostSerializer
+#     permission_classes = (AllowAny,)#(IsAuthenticatedOrReadOnly,)
+#     # authentication_classes = [JWTAuthentication]
+    
+       
 #     def get(self, request, format=None):
-#         posts = Post.objects.all()
-#         serializer = PostSerializer(posts, many=True)
+#         posts = Post.objects.all()[::-1]
+#         page = self.paginate_queryset(posts)
+#         if page is not None:
+#             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+#         else:
+#             serializer = PostSerializer(posts, many=True)
 #         return Response(serializer.data)
     
 #     def post(self, request, format=None):
 #         serializer = PostSerializer(data=request.data)
+#         print(request.data)
 #         if serializer.is_valid():
-#             serializer.save()
+#             serializer.save(user=request.user)
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+    
+    
 # class PostDetail(APIView):
+#     # permission_classes = (IsOwnerOrReadOnly,)
+#     # authentication_classes = [JWTAuthentication]
+    
 #     def get_object(self, pk):
 #         try:
 #             return Post.objects.get(pk=pk)
@@ -45,51 +62,43 @@ from rest_framework.pagination import PageNumberPagination
 #         serializer = PostSerializer(post)
 #         return Response(serializer.data)
     
-#    def put(self, request, pk, format=None):
-#       post = self.get_object(pk)
-#       serializer = PostSerializer(post, data=request.data)
-#       if serializer.is_valid():
-#           serializer.save()
-#           return Response(serializer.data)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+#     def put(self, request, pk, format=None):
+#         post = self.get_object(pk)
+#         serializer = PostSerializer(post, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=request.user)
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 #     def delete(self, request, pk, format=None):
 #         post = self.get_object(pk)
 #         post.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-
+    
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
+    
+    
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 3
 # 클래스형 view를 만들 때 APIView, Mixin, Generic CBV, ViewSets 방식이 있는데 오른쪽으로 갈수록 그 전에 것을 모두 상속하기에 코드가 간결해진다.
 # 밑에 코드는 viewsets으로 작성한 view이다.
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-id') #==> id값을 내림차순으로 주겠다.(id가 큰값부터 넘겨준다.)
     serializer_class = PostSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = (IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly)
+    pagination_class = StandardResultsSetPagination
+#     # setting에 PageNumberPagination을 default로 설정해주면 pagenation이 알아서 적용이 된다!!
+#     # 하지만 setting에 default로 설치되어있는 pagenation이 맘에 안든다면, 위와같이 StandardResultsSetPagination이라는
+#     # 클래스를 만들어서 PageNumberPagination을 상속한 후, 내가 원하는 view에만 pagination_class를 정의해서 따로 pagenation을 설정을 해줄 수 있다.
+#     # 위의 코드를 잘 살펴보자!!
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
         
-# 이것은 Post에 대해서만 pagenation하겠다는 것을 함수로 만들어 놓은 것이다.
-# 이렇게 setting에서 전체적으로 진행하지 않고 따로 pagenation을 만들어 주고 싶다면 밑에 코드와 같이 설정을 해주어야 한다.
-class PostPaginationViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    pagination_class = PageNumberPagination
-    
-# class CommentViewSet(viewsets.ModelViewSet):
-#     authentication_classes = [BasicAuthentication, SessionAuthentication]
-#     permission_classes = (IsAuthenticatedOrReadOnly,)
-#     queryset = Comment.objects.all()
-#     serializer_class = CommentSerializer
-    
-#     # perform_create는 현재 요청을 하는 user를 전달해주기 위해 만들어진 메서드이다.
-#     # 이 저장된 user로 이제 권한을 정해주게 되는데 
-#     # 객체를 생성한 유저와 요청을 한 유저가 같으며 그에 해당하는 권한을 주고,
-#     # 만약 객체를 생성한 유저와 요청을 한 유저가 다르면 그냥 읽을 수 있게만 해주도록 나는 설정을 했다.
-#     # 이것을 판단하기 위한 함수를 만들어준것이다.
-#     def perform_create(self, serializer):
-#         serializer.save(user = self.request.user)
-
 
 # comment에 대한 권한을 좀 더 세세하게 나누기 위해서 viewset이 아닌 mixins를 사용했다.        
 class CommentList(mixins.ListModelMixin,

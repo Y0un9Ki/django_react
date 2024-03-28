@@ -61,14 +61,13 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 	'PAGE_SIZE': 5,
-    # setting에서 pagenation에 대해 설정을 하면 모두 pagenation이 되게 된다. 
-    # 그렇기에 따로 우리가 원하는 부분만 원한다면 각 view에가서 따로 설정을 해주어야 한다. 
-    # post.view에 따로 설정해 놓은것이 있음.
+    # setting에서 pagenation에 대해 설정을 하면 기본 pagenation class가 정의되게 된다. 
+
 }
 
 # Configure the JWT settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,

@@ -19,15 +19,15 @@ class PostSerializer(serializers.ModelSerializer):
 
         return attrs
     
-    # def create(self, validated_data):
-    #     return Post.objects.create(**validated_data)
+    def create(self, validated_data):
+        return Post.objects.create(**validated_data)
     
-    # def update(self, instance, validated_data):
-    #     instance.title = validated_data.get('title', instance.title)
-    #     instance.content = validated_data.get('content', instance.content)
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.content = validated_data.get('content', instance.content)
         
-    #     instance.save()
-    #     return instance
+        instance.save()
+        return instance
     
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source = 'user.username', read_only=True)
