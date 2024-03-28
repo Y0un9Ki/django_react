@@ -1,4 +1,4 @@
-# Semi-project
+![waving](https://capsule-render.vercel.app/api?type=waving&height=200&fontAlignY=40&text=SEMI&color=gradient)
 
 서울시에 주거지역중 화재 취약지를 골라 화재 취약구를 선정한 후 소방차나 소방서, 안전센터와 거리가 먼 화재취약지에 대해 비상소화장치의 입지를 예측, 분석하는 semi project를 진행하였습니다.
 
