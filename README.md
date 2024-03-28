@@ -9,28 +9,40 @@
 
 ## 개발기간
 
-2024년 3월 13일 ~ 진행중
+2024.03.13 ~
 
-## 개발자 소개
+# Contirbute
 
-backend : 김영기
+| 김영기 | Auth, Post, Comment | B.E. |
+| --- | --- | --- |
+| 권오규 | WEB UI | F.E. |
 
-frontend : 권오규
+</br>
 
-## 개발 환경
+# STACK
 
-backend : Python
+### F.E.
 
-frontend : react
+|JavaScript|React|
+| :--: | :--: |
+| <img src="https://techstack-generator.vercel.app/js-icon.svg" alt="icon" width="65" height="65" /> | <img src="https://techstack-generator.vercel.app/react-icon.svg" alt="icon" width="65" height="65" /> |
 
-IDE : VScode
 
-Framework : Django-Rest-Framework 3.15.0
 
-협업 Tool : Git
+### B.E.
 
-## 기술 스택
+|Python|Django|
+| :--: | :--: |
+| <img src="https://techstack-generator.vercel.app/python-icon.svg" alt="icon" width="65" height="65" /> | <img src="https://techstack-generator.vercel.app/django-icon.svg" alt="icon" width="65" height="65" /> |
 
-DataBase : SQLite3(빠른 개발을 위해)
 
-회의 : Notion, 서면회의
+# TOOLS
+
+<div>
+<img src="https://img.shields.io/badge/Git-F05032?style=flat&logo=Git&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
+<img src="https://img.shields.io/badge/Slack-4A154B?style=flat&logo=Slack&logoColor=white"/>
+<img src="https://img.shields.io/badge/VSCode-007ACC?style=flat&logo=Visual Studio Code&logoColor=white"/>
+<a href='https://trello.com/b/k1QJ1bBl/40%EA%B8%B0-niweke-1st-project'><img src="https://img.shields.io/badge/Trello-0052CC?style=flat&logo=Trello&logoColor=white" /></a>
+</div>
+
